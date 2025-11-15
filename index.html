@@ -146,7 +146,7 @@ function loadUserData() {
   
   // Only render unlock button if dev account
   const adminControls = document.getElementById('admin-controls');
-  adminControls.innerHTML = "SuperMemes_64";
+  adminControls.innerHTML = "";
   if (data.username === "SuperMemes_64") {
     const btn = document.createElement("button");
     btn.id = "unlock-btn";
@@ -802,7 +802,7 @@ document.getElementById('confirm-no').addEventListener('click', ()=>{document.ge
 
 function logout() {
   localStorage.removeItem('userData');
-  window.location.href = "https://scratchlet-official.github.io/";
+  window.location.href = "https://scratchlet.github.io/";
 }
 
 renderCollection();
