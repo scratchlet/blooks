@@ -1,4 +1,4 @@
-<DOCTYPE html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
 <meta charset="UTF-8">
@@ -70,6 +70,9 @@ background:rgba(255,255,255,.2);
 padding:8px 12px;
 border-radius:12px;
 font-weight:900;
+display: flex;
+align-items: center;
+gap: 4px;
 }
 
 /* BUTTONS */
@@ -570,7 +573,7 @@ opacity: 0.82;
 
         <div class="view-stat-row">
             <div>Owned: <span id="modalOwned" style="color:#ffcc00;">0</span></div>
-            <div>Value: <span id="modalValue" style="color:#ffcc00;">🪙0</span></div>
+            <div>Value: <span id="modalValue" style="color:#ffcc00;">🪙 0</span></div>
         </div>
 
         <div class="view-actions">
@@ -653,9 +656,12 @@ window.Scratchlet = {
 user: null,
 ref: null,
 coins: 0,
-inventory: new Set(),
+inventory: [], 
 equipped: null
 };
+
+// State cache object to resolve confirmation modal scope conflicts cleanly
+let targetedConfirmTransactionState = null;
 
 /* ================= AUTO LOGOUT ================= */
 let logoutTimer;
@@ -692,7 +698,7 @@ coins: increment(amount)
 window.Scratchlet.saveInventory = async () => {
 if (!Scratchlet.ref) return;
 await updateDoc(Scratchlet.ref, {
-ownedBlocks: [...Scratchlet.inventory]
+ownedBlocks: Scratchlet.inventory 
 });
 };
 
@@ -726,10 +732,9 @@ let currentSearchQuery = "";
 let currentFilterCategory = "all";
 let isPackSeparationEnabled = true;
 
-// Helper to convert Set format array items into structured tally quantities
 function parseInventoryTallies() {
   const counts = {};
-  [...Scratchlet.inventory].forEach(itemName => {
+  Scratchlet.inventory.forEach(itemName => {
     counts[itemName] = (counts[itemName] || 0) + 1;
   });
   return counts;
@@ -883,7 +888,7 @@ function createBlookButtonNode(item) {
     blookButton.className = "blook-image-btn"; 
     blookButton.onclick = () => openModal(item.name);
     blookButton.innerHTML = `
-      <div class="blook-badge-circle" style="background: ${generateGlossyGradient(item.color)};">
+      <div class="blook-badge-circle" style="background: ${generateGlossyGradient(item.color)}">
         ${item.qty}
       </div>
       <img class="blook-btn-img" src="${item.art || 'https://i.postimg.cc/8Cs9nSzs/Breakfast.png'}" alt="${item.name}">
@@ -962,7 +967,7 @@ function openModal(blookName) {
 
   document.getElementById("modalDrop").innerText = details.chance;
   document.getElementById("modalOwned").innerText = qty;
-  document.getElementById("modalValue").innerText = `🪙${details.value}`;
+  document.getElementById("modalValue").innerText = `🪙 ${details.value}`;
 
   document.getElementById("modalTargetBtn").onclick = () => {
     if (qty === 1) {
@@ -990,24 +995,30 @@ window.closeModal = function() {
   document.getElementById("cardModal").classList.remove("show");
 };
 
+// FIXED: Scopes parameters to global memory objects to guarantee execution on confirmation selection
 function openConfirmModal(blookName, tokenCount) {
+  targetedConfirmTransactionState = { name: blookName, payout: tokenCount };
   document.getElementById("confirmText").innerText = `Sell the last ${blookName} for ${tokenCount} tokens?`;
-  document.getElementById("confirmYesBtn").onclick = () => {
-    executeTransaction(blookName, 1, tokenCount);
-    window.closeConfirmModal();
-    window.closeModal();
-  };
   document.getElementById("confirmModal").classList.add("show");
 }
 
 window.closeConfirmModal = function() {
   document.getElementById("confirmModal").classList.remove("show");
+  targetedConfirmTransactionState = null;
+};
+
+// Bind runtime validation directly onto the verification DOM listener structure
+document.getElementById("confirmYesBtn").onclick = () => {
+  if (targetedConfirmTransactionState) {
+    executeTransaction(targetedConfirmTransactionState.name, 1, targetedConfirmTransactionState.payout);
+    window.closeConfirmModal();
+    window.closeModal();
+  }
 };
 
 async function executeTransaction(blookName, amount, totalPayout) {
   const currentArray = [...Scratchlet.inventory];
   
-  // Cleanly slice out instances from array stack configuration
   let removedCount = 0;
   for (let i = currentArray.length - 1; i >= 0; i--) {
     if (currentArray[i] === blookName && removedCount < amount) {
@@ -1017,9 +1028,8 @@ async function executeTransaction(blookName, amount, totalPayout) {
   }
 
   if (removedCount > 0) {
-    Scratchlet.inventory = new Set(currentArray);
+    Scratchlet.inventory = currentArray;
     
-    // UI update hooks
     const counts = parseInventoryTallies();
     const remainingQty = counts[blookName] || 0;
 
@@ -1038,7 +1048,6 @@ async function executeTransaction(blookName, amount, totalPayout) {
       }
     }
 
-    // Execute Global Engine Fire Store Sync Helpers
     await Scratchlet.addCoins(totalPayout);
     await Scratchlet.saveInventory();
   }
@@ -1085,7 +1094,7 @@ onAuthStateChanged(auth, (user) => {
     if (!data) return;
 
     Scratchlet.coins = data.coins || 0;
-    Scratchlet.inventory = new Set(data.ownedBlocks || []);
+    Scratchlet.inventory = data.ownedBlocks || []; 
     Scratchlet.equipped = data.equipped || null;
 
     /* AUTO START LOGOUT TIMER */
