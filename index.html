@@ -12,12 +12,12 @@
 <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
 
 <style>
-/* FORCE ALL UTILITIES, BUTTONS, INPUTS, AND DROPDOWNS TO INHERIT NUNITO STRICTLY */
-* {
+/* GLOBAL BASE STYLE LAYER */
+body, html, input, select, button, div, span, p, a {
     margin: 0;
     padding: 0;
     box-sizing: border-box;
-    font-family: "Nunito", sans-serif !important;
+    font-family: "Nunito", sans-serif;
 }
 
 body {
@@ -27,7 +27,23 @@ body {
     overflow-x: hidden;
 }
 
-/* BACKGROUND */
+/* FIXED: Isolate material icons completely from general text font rules */
+.material-icons {
+    font-family: 'Material Icons' !important;
+    font-weight: normal;
+    font-style: normal;
+    font-size: 24px;
+    line-height: 1;
+    letter-spacing: normal;
+    text-transform: none;
+    display: inline-block;
+    white-space: nowrap;
+    word-wrap: normal;
+    direction: ltr;
+    -webkit-font-smoothing: antialiased;
+}
+
+/* BACKGROUND ACCENTS */
 .background{position:fixed;inset:0;z-index:-1;overflow:hidden}
 .square{
 position:absolute;
@@ -52,13 +68,13 @@ background:#ff7f11;
 box-shadow: inset 0 -6px rgba(0,0,0,.2);
 }
 
-/* STRICT LOGO FONT OVERRIDE */
+/* BRAND LOGO OVERRIDE */
 .logo {
     font-family: "Titan One", cursive !important;
     font-size: 2.5rem;
 }
 
-/* HUD */
+/* HUD elements */
 .hud{
 display:flex;
 align-items:center;
@@ -75,7 +91,7 @@ align-items: center;
 gap: 4px;
 }
 
-/* BUTTONS */
+/* INTERACTION EMISSION BUTTONS */
 .btn{
 font-weight:900;
 border:none;
@@ -117,7 +133,7 @@ transform: none !important;
 cursor: not-allowed;
 }
 
-/* SIDEBAR */
+/* COMPACT MENU SIDEBAR */
 .overlay{
 position:fixed;
 inset:0;
@@ -159,7 +175,7 @@ z-index:999;
     font-family: "Titan One", cursive !important;
 }
 
-/* MENU ITEMS */
+/* VERTICAL HUB APP ACTIONS */
 .menu-item{
 display:flex;
 align-items:center;
@@ -168,14 +184,14 @@ width:100%;
 font-weight:900;
 }
 
-/* CONTAINER & LAYOUT */
+/* STRUCTURE CANVAS BOUNDS */
 .container{
 max-width:1200px;
 margin:auto;
 padding:25px;
 }
 
-/* THE ONE BIG INVENTORY CARD */
+/* VIEWPORT CONTAINER CARD */
 .master-inventory-card {
 background: rgba(0, 0, 0, 0.4);
 border: 3px solid rgba(255, 255, 255, 0.15);
@@ -185,7 +201,7 @@ box-shadow: 0 12px 32px rgba(0,0,0,0.35);
 width: 100%;
 }
 
-/* CONTROLS (SEARCH & CATEGORY DROPDOWN) */
+/* CONTROL DECK CONTROLS */
 .inventory-controls {
 display: flex;
 gap: 15px;
@@ -248,21 +264,19 @@ color: white;
 font-weight: 700;
 }
 
-/* TOGGLE PACK BUTTON ACTIVE DESIGNATION */
 .toggle-active-state {
 background: white !important;
 color: #ff8c1a !important;
 border-color: white !important;
 }
 
-/* CUSTOM SCROLLBOX WRAPPER */
+/* OVERFLOW CONTROLLER BOX */
 .inventory-scrollbox {
 max-height: 52vh;
 overflow-y: auto;
 padding-right: 15px;
 }
 
-/* Custom Scrollbar Styling */
 .inventory-scrollbox::-webkit-scrollbar {
 width: 10px;
 }
@@ -282,7 +296,7 @@ border: 2px solid transparent;
 background-clip: padding-box;
 }
 
-/* INLINE PACK CONTAINER */
+/* SEPARATORS FOR COLLECTION SHELVES */
 .pack-inline-section {
 margin-bottom: 30px;
 }
@@ -300,14 +314,14 @@ margin-bottom: 5px;
     text-shadow: 0 3px 0 rgba(0,0,0,0.3);
 }
 
-/* IMAGE BUTTON GRID Layout */
+/* ITEM PLACEMENT MATRIX MAP */
 .blook-button-grid {
 display: grid;
 grid-template-columns: repeat(auto-fill, minmax(95px, 1fr));
 gap: 20px;
 }
 
-/* BLOOK IMAGE BUTTONS */
+/* CARD ENGINE TILES */
 .blook-image-btn {
 background: rgba(255, 255, 255, 0.08);
 border: 2px solid rgba(255, 255, 255, 0.15);
@@ -340,7 +354,7 @@ filter: drop-shadow(0 4px 6px rgba(0,0,0,0.25));
 user-select: none;
 }
 
-/* UNOWNED / GREYED LOCKED SYSTEM */
+/* ACCESSIBILITY GREYED ASSETS */
 .blook-image-btn.locked-blook {
 background: rgba(0, 0, 0, 0.2);
 border: 2px dashed rgba(255, 255, 255, 0.1);
@@ -365,7 +379,7 @@ z-index: 3;
 text-shadow: 0 2px 4px rgba(0,0,0,0.5);
 }
 
-/* COUNTER CIRCLE & NUMBER INSIDE */
+/* BADGES QUANTITY HOVERERS */
 .blook-badge-circle {
     position: absolute;
     top: -8px;
@@ -386,7 +400,7 @@ text-shadow: 0 2px 4px rgba(0,0,0,0.5);
     user-select: none;
 }
 
-/* PREVIEW MODAL CARD VIEW */
+/* POPUP SCREEN BASE MASK */
 .modal-mask {
 position: fixed;
 inset: 0;
@@ -478,7 +492,7 @@ margin-top: 20px;
 
 .view-actions .btn { width: 100%; padding: 12px; justify-content: center; }
 
-/* CONFIRMATION POPUP CARD */
+/* ERROR ASSURANCE PANEL LAYOUTS */
 .confirm-card {
 width: 100%;
 max-width: 380px;
@@ -512,7 +526,6 @@ gap: 16px;
 justify-content: center;
 }
 
-/* FLAT CONFIRMATION BUTTONS */
 .confirm-buttons .btn {
 flex: 1;
 padding: 12px 16px;
@@ -637,7 +650,7 @@ updateDoc,
 increment
 } from "https://www.gstatic.com/firebasejs/10.12.5/firebase-firestore.js";
 
-/* ================= FIREBASE ================= */
+/* ================= FIREBASE CLOUD DECK ================= */
 const firebaseConfig = {
 apiKey: "AIzaSyBzyszqkVPOn_Zbs0eacE1KQccYsTxul1E",
 authDomain: "scratchlet-ss.firebaseapp.com",
@@ -651,7 +664,7 @@ const app = initializeApp(firebaseConfig);
 const auth = getAuth(app);
 const db = getFirestore(app);
 
-/* ================= GLOBAL STATE ================= */
+/* ================= ALL SYSTEM GLOBAL OBJECTS ================= */
 window.Scratchlet = {
 user: null,
 ref: null,
@@ -660,10 +673,9 @@ inventory: [],
 equipped: null
 };
 
-// Global object cache to make sure confirming the sale passes values cleanly
 let targetedConfirmTransactionState = null;
 
-/* ================= AUTO LOGOUT ================= */
+/* ================= AUTOMATED TIMEOUT ENGINE ================= */
 let logoutTimer;
 const TIME_LIMIT = 5 * 60 * 1000;
 
@@ -680,7 +692,7 @@ location.href = "https://scratchlet.github.io/login/";
 window.addEventListener(ev, resetLogoutTimer);
 });
 
-/* ================= SAVE HELPERS ================= */
+/* ================= CLOUD WRITER SYSTEM PROFILES ================= */
 window.Scratchlet.saveCoins = async (amount) => {
 if (!Scratchlet.ref) return;
 await updateDoc(Scratchlet.ref, {
@@ -709,7 +721,7 @@ equipped: item
 });
 };
 
-/* ================= INVENTORY PAGE MODULE LOGIC ================= */
+/* ================= MAIN SHEET DATA REGISTRY ================= */
 const CONFIG = window.CONFIG || { pizzaBlook: "https://i.postimg.cc/8Cs9nSzs/Breakfast.png" };
 
 const BLOOK_REGISTRY = {
@@ -1006,7 +1018,6 @@ window.closeConfirmModal = function() {
   targetedConfirmTransactionState = null;
 };
 
-// FIXED: Clean global function setup ensures confirmation click event never fails to resolve
 window.executeConfirmedLastItemSale = function() {
   if (targetedConfirmTransactionState) {
     executeTransaction(targetedConfirmTransactionState.name, 1, targetedConfirmTransactionState.payout);
@@ -1052,7 +1063,7 @@ async function executeTransaction(blookName, amount, totalPayout) {
   }
 }
 
-/* SIDEBAR HANDLERS */
+/* SIDEBAR RESTRUCTURING LOGIC */
 const menu = document.getElementById("menu");
 const overlay = document.getElementById("overlay");
 document.getElementById("menuBtn").onclick = () => { menu.classList.add("open"); overlay.classList.add("show"); };
@@ -1064,7 +1075,7 @@ document.getElementById("logoutBtn").onclick = async () => {
   await signOut(auth);
 };
 
-/* BACKGROUND SYSTEM */
+/* FLOATING AMBIENT BACKGROUND PARTICLES */
 const bg = document.querySelector(".background");
 for(let i=0;i<45;i++){
   const s=document.createElement("div"); s.className="square";
@@ -1073,12 +1084,12 @@ for(let i=0;i<45;i++){
   bg.appendChild(s);
 }
 
-/* ENGINE LIVE INTERFACE SYNC EVENT */
+/* ENGINE LIVE REDRAW DISPATCH OVERVIEW */
 window.addEventListener("scratchlet-update", () => {
   renderInventoryPage();
 });
 
-/* ================= LIVE SYNC ENGINE INITIALIZATION ================= */
+/* ================= LIVE DATABOUND SNAPSHOT LISTENER INITIALIZER ================= */
 onAuthStateChanged(auth, (user) => {
   if (!user) {
     location.href = "https://scratchlet.github.io/login/";
@@ -1096,15 +1107,12 @@ onAuthStateChanged(auth, (user) => {
     Scratchlet.inventory = data.ownedBlocks || []; 
     Scratchlet.equipped = data.equipped || null;
 
-    /* AUTO START LOGOUT TIMER */
     resetLogoutTimer();
-
-    /* EVENT HOOK trigger */
     window.dispatchEvent(new Event("scratchlet-update"));
   });
 });
 
-console.log("Scratchlet Engine & Inventory Controller Integrated 🚀");
+console.log("Scratchlet Engine Typography & Interface Assets Operational 🚀");
 </script>
 </body>
 </html>
