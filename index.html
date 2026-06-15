@@ -587,7 +587,7 @@ opacity: 0.82;
     <div class="confirm-card" onclick="event.stopPropagation()">
         <div class="confirm-title" id="confirmText">Sell the last Blook for 0 tokens?</div>
         <div class="confirm-buttons">
-            <button class="btn btn-yes" id="confirmYesBtn">Yes</button>
+            <button class="btn btn-yes" id="confirmYesBtn" onclick="window.executeConfirmedLastItemSale()">Yes</button>
             <button class="btn btn-no" onclick="window.closeConfirmModal()">No</button>
         </div>
     </div>
@@ -660,7 +660,7 @@ inventory: [],
 equipped: null
 };
 
-// State cache object to resolve confirmation modal scope conflicts cleanly
+// Global object cache to make sure confirming the sale passes values cleanly
 let targetedConfirmTransactionState = null;
 
 /* ================= AUTO LOGOUT ================= */
@@ -995,7 +995,6 @@ window.closeModal = function() {
   document.getElementById("cardModal").classList.remove("show");
 };
 
-// FIXED: Scopes parameters to global memory objects to guarantee execution on confirmation selection
 function openConfirmModal(blookName, tokenCount) {
   targetedConfirmTransactionState = { name: blookName, payout: tokenCount };
   document.getElementById("confirmText").innerText = `Sell the last ${blookName} for ${tokenCount} tokens?`;
@@ -1007,8 +1006,8 @@ window.closeConfirmModal = function() {
   targetedConfirmTransactionState = null;
 };
 
-// Bind runtime validation directly onto the verification DOM listener structure
-document.getElementById("confirmYesBtn").onclick = () => {
+// FIXED: Clean global function setup ensures confirmation click event never fails to resolve
+window.executeConfirmedLastItemSale = function() {
   if (targetedConfirmTransactionState) {
     executeTransaction(targetedConfirmTransactionState.name, 1, targetedConfirmTransactionState.payout);
     window.closeConfirmModal();
