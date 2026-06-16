@@ -1,25 +1,25 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Scratchlet | Inventory Layout</title>
+    <title>Scratchlet | Inventory</title>
     
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800;900&family=Titan+One&display=swap" rel="stylesheet">
+    <link rel="preconnect" href="https://fonts.googleapis.com/">
+    <link rel="preconnect" href="https://fonts.gstatic.com/" crossorigin="">
+    <link href="https://fonts.googleapis.com/css2?family=Nunito:ital,wght@0,300;0,400;0,600;0,700;0,800;0,900;1,400&family=Titan+One&display=swap" rel="stylesheet">
     <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
     
     <style>
-        * {
+        /* Reset and Font Inheritance */
+        *, *::before, *::after {
             margin: 0;
             padding: 0;
             box-sizing: border-box;
+            font-family: "Nunito", sans-serif;
         }
         
         body {
-            font-family: "Nunito", sans-serif;
-            font-weight: 700;
             color: white;
             min-height: 100vh;
             background: linear-gradient(160deg, #fff4d6 0%, #ffc76a 25%, #ff9b2f 50%, #ff7f11 75%, #8f3200 100%);
@@ -39,11 +39,12 @@
             border: 2px solid rgba(255, 255, 255, .35);
             background: rgba(255, 255, 255, .12);
             animation: fall linear infinite;
+            top: -150px;
         }
         
         @keyframes fall {
-            from { transform: translateY(-120px); }
-            to { transform: translateY(120vh) rotate(360deg); }
+            from { transform: translateY(0); }
+            to { transform: translateY(130vh) rotate(360deg); }
         }
         
         /* NAVBAR */
@@ -63,42 +64,54 @@
         .logo {
             font-family: "Titan One", cursive;
             font-size: 2.5rem;
-            color: white;
-            text-shadow: none;
+            flex-shrink: 0;
         }
         
-        /* HUD */
-        .hud {
+        /* DARK CARD MINIBAR WRAPPER */
+        .minibar {
             display: flex;
             align-items: center;
-            gap: 10px;
+            gap: 4px;
+            background: #8f3200;
+            padding: 6px 12px;
+            border-radius: 16px;
+            box-shadow: inset 0 -4px rgba(0,0,0,.3), 0 4px 10px rgba(0,0,0,0.15);
+            border: 1px solid rgba(255,255,255,0.05);
         }
-        
-        .coins {
-            background: rgba(255, 255, 255, .2);
-            padding: 8px 12px;
-            border-radius: 12px;
+
+        /* DYNAMIC COIN INDICATOR DISPLAY INSIDE MINIBAR */
+        .minibar-coins {
             font-weight: 900;
+            font-size: 0.95rem;
+            padding-right: 12px;
+            margin-right: 8px;
+            border-right: 2px solid rgba(255, 255, 255, 0.15);
+            display: flex;
+            align-items: center;
+            gap: 4px;
+            color: #fff4d6;
         }
         
-        /* BUTTONS */
+        /* BUTTON SYSTEM */
         .btn {
-            font-family: "Nunito", sans-serif;
             font-weight: 900;
             border: none;
             cursor: pointer;
-            transition: .12s ease;
+            letter-spacing: .3px;
+            font-size: 0.85rem;
+            transition: transform .12s ease, box-shadow .12s ease;
             text-decoration: none;
             display: inline-flex;
             align-items: center;
             justify-content: center;
-            gap: 6px;
+            position: relative;
         }
         
         .primary, .secondary {
-            padding: 10px 16px;
+            padding: 10px 18px;
             border-radius: 14px;
             box-shadow: 0 6px 0 rgba(0,0,0,.25);
+            transform: translateY(0);
         }
         
         .primary {
@@ -112,12 +125,80 @@
             border: 2px solid rgba(255, 255, 255, .25);
         }
         
-        .btn:active {
-            transform: translateY(4px);
-            box-shadow: 0 2px 0 rgba(0,0,0,.25);
+        .btn:hover { transform: translateY(-2px); }
+        .btn:active { transform: translateY(4px); box-shadow: 0 2px 0 rgba(0,0,0,.25); }
+        
+        /* TRANSPARENT MINIBAR ICON BUTTONS */
+        .minibar-btn {
+            width: 38px;
+            height: 38px;
+            padding: 0;
+            background: transparent !important;
+            border: none !important;
+            box-shadow: none !important;
+            color: rgba(255, 255, 255, 0.85);
+            border-radius: 50%;
+            transition: transform 0.15s ease, color 0.15s ease;
         }
         
-        /* SIDEBAR */
+        .minibar-btn:hover {
+            transform: scale(1.15) !important;
+            color: #fff4d6;
+        }
+        
+        .minibar-btn:active {
+            transform: scale(0.95) !important;
+        }
+        
+        .minibar-btn .material-icons { font-size: 22px; }
+        .minibar-btn.active { color: #fff4d6; }
+        
+        #logoutBtn.minibar-btn { color: #ffc76a; }
+        #logoutBtn.minibar-btn:hover { color: white; }
+        
+        /* INFO BUBBLE TOOLTIPS */
+        .minibar-btn::after {
+            content: attr(data-tooltip);
+            position: absolute;
+            top: 48px;
+            left: 50%;
+            transform: translateX(-50%) translateY(-5px) scale(0.9);
+            background: #fff4d6;
+            color: #8f3200;
+            padding: 6px 12px;
+            border-radius: 8px;
+            font-size: 0.8rem;
+            font-weight: 800;
+            white-space: nowrap;
+            opacity: 0;
+            pointer-events: none;
+            transition: transform 0.15s cubic-bezier(0.175, 0.885, 0.32, 1.275), opacity 0.15s ease;
+            z-index: 100;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+            border: 2px solid #ff9b2f;
+        }
+        
+        .minibar-btn::before {
+            content: '';
+            position: absolute;
+            top: 42px;
+            left: 50%;
+            transform: translateX(-50%) translateY(-5px);
+            border-width: 0 6px 6px 6px;
+            border-style: solid;
+            border-color: transparent transparent #fff4d6 transparent;
+            opacity: 0;
+            pointer-events: none;
+            transition: transform 0.15s cubic-bezier(0.175, 0.885, 0.32, 1.275), opacity 0.15s ease;
+            z-index: 101;
+        }
+        
+        .minibar-btn:hover::after, .minibar-btn:hover::before {
+            opacity: 1;
+            transform: translateX(-50%) translateY(0) scale(1);
+        }
+        
+        /* MODAL COUPLING OVERLAY FIXES */
         .overlay {
             position: fixed;
             inset: 0;
@@ -133,51 +214,15 @@
             pointer-events: auto;
         }
         
-        .sidebar {
-            position: fixed;
-            top: 0;
-            right: -320px;
-            width: 300px;
-            height: 100vh;
-            background: #ff8c1a;
-            box-shadow: -10px 0 25px rgba(0,0,0,.25);
-            padding: 20px;
-            display: flex;
-            flex-direction: column;
-            gap: 10px;
-            transition: .3s ease;
-            z-index: 999;
-        }
-        
-        .sidebar.open {
-            right: 0;
-        }
-        
-        .sidebar-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 10px;
-            font-family: "Titan One", cursive;
-        }
-        
-        .menu-item {
-            display: flex;
-            align-items: center;
-            justify-content: flex-start;
-            padding-left: 20px;
-            gap: 10px;
-            width: 100%;
-        }
-        
-        /* INVENTORY LAYOUT */
+        /* INVENTORY LAYOUT CONTAINER */
         .container {
             max-width: 1200px;
             margin: auto;
             padding: 25px;
+            position: relative;
+            z-index: 5;
         }
         
-        /* ONE BIG UNIFIED CONTAINER CARD */
         .big-inventory-card {
             background: rgba(255, 255, 255, 0.08);
             border: 3px solid rgba(255, 255, 255, 0.2);
@@ -265,7 +310,7 @@
             background-position: right 8px center;
         }
         
-        /* MAIN IMAGE BUTTON WRAPPER FOR SCROLLING */
+        /* SCROLL CONTAINER RULES */
         .inventory-scroll-container {
             max-height: 58vh;
             overflow-y: auto;
@@ -273,54 +318,19 @@
             min-height: 120px;
         }
         
-        .inventory-scroll-container::-webkit-scrollbar {
-            width: 8px;
-        }
-        .inventory-scroll-container::-webkit-scrollbar-track {
-            background: rgba(0,0,0,0.1);
-            border-radius: 10px;
-        }
-        .inventory-scroll-container::-webkit-scrollbar-thumb {
-            background: rgba(255,255,255,0.3);
-            border-radius: 10px;
-        }
+        .inventory-scroll-container::-webkit-scrollbar { width: 8px; }
+        .inventory-scroll-container::-webkit-scrollbar-track { background: rgba(0,0,0,0.1); border-radius: 10px; }
+        .inventory-scroll-container::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.3); border-radius: 10px; }
         
-        /* PACK SECTION SEPARATORS */
-        .pack-section {
-            margin-bottom: 30px;
-        }
+        /* PACK SECTIONS */
+        .pack-section { margin-bottom: 30px; }
+        .pack-section:last-child { margin-bottom: 10px; }
+        .pack-section-title { font-family: "Titan One", cursive; font-size: 1.3rem; margin-bottom: 10px; color: #fff1d0; display: flex; align-items: center; gap: 8px; }
+        .pack-section-line { border: none; height: 2px; background: rgba(255, 255, 255, 0.15); margin-bottom: 15px; }
         
-        .pack-section:last-child {
-            margin-bottom: 10px;
-        }
+        /* BLOOK CONTAINERS */
+        .blook-image-container { display: flex; flex-direction: row; flex-wrap: wrap; gap: 20px; padding: 5px; }
         
-        .pack-section-title {
-            font-family: "Titan One", cursive;
-            font-size: 1.3rem;
-            margin-bottom: 10px;
-            color: #fff1d0;
-            display: flex;
-            align-items: center;
-            gap: 8px;
-        }
-        
-        .pack-section-line {
-            border: none;
-            height: 2px;
-            background: rgba(255, 255, 255, 0.15);
-            margin-bottom: 15px;
-        }
-        
-        /* GRID ROWS FOR THE BLOONS */
-        .blook-image-container {
-            display: flex;
-            flex-direction: row;
-            flex-wrap: wrap;
-            gap: 20px;
-            padding: 5px;
-        }
-        
-        /* BLOOK IMAGE BUTTON */
         .blook-img-btn {
             background: rgba(255, 255, 255, 0.05);
             border: none;
@@ -336,31 +346,11 @@
             transition: transform 0.15s ease;
         }
         
-        .blook-img-btn:not(.locked):hover {
-            transform: scale(1.1);
-            background: rgba(255, 255, 255, 0.12);
-            z-index: 2;
-        }
+        .blook-img-btn:not(.locked):hover { transform: scale(1.1); background: rgba(255, 255, 255, 0.12); z-index: 2; }
+        .blook-img-btn:not(.locked):active { transform: scale(0.96); }
+        .blook-img-btn.locked { filter: grayscale(100%); opacity: 0.55; cursor: not-allowed; }
+        .blook-graphic { width: 75%; height: 75%; object-fit: contain; filter: drop-shadow(0 4px 6px rgba(0,0,0,0.15)); }
         
-        .blook-img-btn:not(.locked):active {
-            transform: scale(0.96);
-        }
-
-        /* GREYSCALE + LOCK FOR UNOWNED BLOOKS */
-        .blook-img-btn.locked {
-            filter: grayscale(100%);
-            opacity: 0.55;
-            cursor: not-allowed;
-        }
-        
-        .blook-graphic {
-            width: 75%;
-            height: 75%;
-            object-fit: contain;
-            filter: drop-shadow(0 4px 6px rgba(0,0,0,0.15));
-        }
-        
-        /* NUMBER OWNED BADGE */
         .blook-qty-badge {
             position: absolute;
             top: -6px;
@@ -377,19 +367,10 @@
             z-index: 3;
             box-shadow: 0 3px 6px rgba(0,0,0,0.2);
         }
-
-        .blook-qty-badge .material-icons {
-            font-size: 1rem;
-        }
+        .blook-qty-badge .material-icons { font-size: 1rem; }
+        .no-results-text { text-align: center; font-size: 1.2rem; color: rgba(255,255,255,0.6); padding-top: 40px; }
         
-        .no-results-text {
-            text-align: center;
-            font-size: 1.2rem;
-            color: rgba(255,255,255,0.6);
-            padding-top: 40px;
-        }
-        
-        /* VIEWING BLOOK CARD MODAL - RECTANGLE SIDE BY SIDE */
+        /* VIEW MODAL CARD SYSTEM */
         .modal-container {
             position: fixed;
             inset: 0;
@@ -403,10 +384,7 @@
             padding: 20px;
         }
         
-        .modal-container.show {
-            opacity: 1;
-            pointer-events: auto;
-        }
+        .modal-container.show { opacity: 1; pointer-events: auto; }
         
         .blook-view-card {
             background: #ff8c1a;
@@ -425,9 +403,7 @@
             gap: 25px;
         }
         
-        .modal-container.show .blook-view-card {
-            transform: scale(1);
-        }
+        .modal-container.show .blook-view-card { transform: scale(1); }
         
         .close-card-btn {
             position: absolute;
@@ -446,66 +422,15 @@
             z-index: 5;
         }
         
-        /* LEFT COLUMN */
-        .card-left-col {
-            flex: 0 0 auto;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
-
-        .card-graphic-frame {
-            width: 140px;
-            height: 140px;
-            background: rgba(255,255,255,0.15);
-            border-radius: 20px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
+        .card-left-col { flex: 0 0 auto; display: flex; align-items: center; justify-content: center; }
+        .card-graphic-frame { width: 140px; height: 140px; background: rgba(255,255,255,0.15); border-radius: 20px; display: flex; align-items: center; justify-content: center; }
+        .card-graphic { width: 75%; height: 75%; object-fit: contain; }
         
-        .card-graphic {
-            width: 75%;
-            height: 75%;
-            object-fit: contain;
-        }
-        
-        /* RIGHT COLUMN */
-        .card-right-col {
-            flex: 1 1 auto;
-            display: flex;
-            flex-direction: column;
-            text-align: left;
-        }
-
-        .card-name {
-            font-family: "Titan One", cursive;
-            font-size: 1.8rem;
-            margin-bottom: 8px;
-            line-height: 1.2;
-        }
-        
-        .card-meta-row {
-            display: flex;
-            justify-content: flex-start;
-            flex-wrap: wrap;
-            gap: 8px;
-            margin-bottom: 18px;
-        }
-        
-        .card-pill {
-            padding: 4px 12px;
-            border-radius: 20px;
-            font-size: 0.85rem;
-            font-weight: 800;
-            background: rgba(0,0,0,0.15);
-        }
-        
-        .card-actions {
-            display: flex;
-            flex-direction: column;
-            gap: 10px;
-        }
+        .card-right-col { flex: 1 1 auto; display: flex; flex-direction: column; text-align: left; }
+        .card-name { font-family: "Titan One", cursive; font-size: 1.8rem; margin-bottom: 8px; line-height: 1.2; }
+        .card-meta-row { display: flex; justify-content: flex-start; flex-wrap: wrap; gap: 8px; margin-bottom: 18px; }
+        .card-pill { padding: 4px 12px; border-radius: 20px; font-size: 0.85rem; font-weight: 800; background: rgba(0,0,0,0.15); }
+        .card-actions { display: flex; flex-direction: column; gap: 10px; }
         
         .action-btn {
             width: 100%;
@@ -520,36 +445,14 @@
             transition: transform 0.1s, box-shadow 0.1s;
         }
         
-        .action-btn:active {
-            transform: translateY(3px);
-            box-shadow: 0 2px 0 rgba(0,0,0,0.2);
-        }
-        
-        .btn-sell {
-            background: white;
-            color: #d62424;
-        }
-        
-        .btn-sell-dupes {
-            background: #ffb633;
-            color: white;
-            border: 2px solid rgba(255,255,255,0.4);
-        }
+        .action-btn:active { transform: translateY(3px); box-shadow: 0 2px 0 rgba(0,0,0,0.2); }
+        .btn-sell { background: white; color: #d62424; }
+        .btn-sell-dupes { background: #ffb633; color: white; border: 2px solid rgba(255,255,255,0.4); }
 
-        /* Responsive stack for very small screens */
         @media (max-width: 480px) {
-            .blook-view-card {
-                flex-direction: column;
-                text-align: center;
-                padding-top: 40px;
-            }
-            .card-right-col {
-                text-align: center;
-                width: 100%;
-            }
-            .card-meta-row {
-                justify-content: center;
-            }
+            .blook-view-card { flex-direction: column; text-align: center; padding-top: 40px; }
+            .card-right-col { text-align: center; width: 100%; }
+            .card-meta-row { justify-content: center; }
         }
     </style>
 </head>
@@ -561,22 +464,18 @@
 <div class="modal-container" id="cardModalContainer">
     <div class="blook-view-card">
         <button class="close-card-btn" id="closeCardBtn"><span class="material-icons">close</span></button>
-        
         <div class="card-left-col">
             <div class="card-graphic-frame">
-                <img src="" alt="" class="card-graphic" id="modalGraphic">
+                <img src="https://scratchlet.github.io/blooks/" alt="" class="card-graphic" id="modalGraphic">
             </div>
         </div>
-        
         <div class="card-right-col">
             <div class="card-name" id="modalName">Blook Name</div>
-            
             <div class="card-meta-row">
                 <div class="card-pill" id="modalRarity">Rarity</div>
                 <div class="card-pill" id="modalChance">0%</div>
                 <div class="card-pill" id="modalOwned">Owned: 0</div>
             </div>
-            
             <div class="card-actions">
                 <button class="action-btn btn-sell" id="sellSingleBtn">Sell (🪙 <span id="sellValue">0</span>)</button>
                 <button class="action-btn btn-sell-dupes" id="sellDupesBtn">Sell Duplicates</button>
@@ -585,29 +484,19 @@
     </div>
 </div>
 
-<div class="sidebar" id="menu">
-    <div class="sidebar-header">
-        <div>Menu</div>
-        <button class="btn secondary" id="closeMenu"><span class="material-icons">close</span></button>
-    </div>
-    <a href="https://google.com" class="btn secondary menu-item"><span class="material-icons">home</span> Home</a>
-    <a href="https://google.com" class="btn secondary menu-item"><span class="material-icons">store</span> Market</a>
-    <a href="https://google.com" class="btn secondary menu-item active"><span class="material-icons">inventory_2</span> Inventory</a>
-    <a href="https://google.com" class="btn secondary menu-item"><span class="material-icons">bar_chart</span> Stats</a>
-    <a href="https://google.com" class="btn secondary menu-item"><span class="material-icons">article</span> News</a>
-    <a href="https://google.com" class="btn secondary menu-item"><span class="material-icons">post_add</span> Posts</a>
-    <a href="https://google.com" class="btn secondary menu-item"><span class="material-icons">sports_esports</span> Play</a>
-    <a href="https://google.com" class="btn secondary menu-item"><span class="material-icons">chat</span> Chat</a>
-    <a href="https://google.com" class="btn secondary menu-item"><span class="material-icons">swap_horiz</span> Trading</a>
-    <a href="https://google.com" class="btn secondary menu-item"><span class="material-icons">settings</span> Settings</a>
-    <button class="btn primary menu-item" id="logoutBtn"><span class="material-icons">logout</span> Logout</button>
-</div>
-
 <nav class="navbar">
     <div class="logo">Scratchlet</div>
-    <div class="hud">
-        <div class="coins">🪙 <span id="coinCount">...</span></div>
-        <button class="btn secondary" id="menuBtn"><span class="material-icons">menu</span></button>
+    <div class="minibar">
+        <div class="minibar-coins">🪙 <span id="coinCount">4185</span></div>
+        <a href="https://scratchlet.github.io/login/" class="btn minibar-btn" data-tooltip="Home"><span class="material-icons">home</span></a>
+        <a href="https://scratchlet.github.io/market/" class="btn minibar-btn" data-tooltip="Market"><span class="material-icons">store</span></a>
+        <a href="https://scratchlet.github.io/inventory/" class="btn minibar-btn active" data-tooltip="Inventory"><span class="material-icons">inventory_2</span></a>
+        <a href="https://scratchlet.github.io/stats/" class="btn minibar-btn" data-tooltip="Stats"><span class="material-icons">bar_chart</span></a>
+        <a href="https://scratchlet.github.io/news/" class="btn minibar-btn" data-tooltip="News"><span class="material-icons">article</span></a>
+        <a href="https://scratchlet.github.io/chat/" class="btn minibar-btn" data-tooltip="Chat"><span class="material-icons">chat</span></a>
+        <a href="https://scratchlet.github.io/settings/" class="btn minibar-btn" data-tooltip="Settings"><span class="material-icons">settings</span></a>
+        <a href="https://scratchlet.github.io/trading/" class="btn minibar-btn" data-tooltip="Trading"><span class="material-icons">swap_horiz</span></a>
+        <button id="logoutBtn" class="btn minibar-btn" data-tooltip="Logout"><span class="material-icons">logout</span></button>
     </div>
 </nav>
 
@@ -639,15 +528,16 @@
             </div>
         </div>
         
-        <div class="inventory-scroll-container" id="inventoryScrollContainer"></div>
+        <div class="inventory-scroll-container" id="inventoryScrollContainer">
+            </div>
     </div>
 </div>
 
 <script type="module">
     /* ================= FIREBASE INITIALIZATION ================= */
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.5/firebase-app.js";
-    import {  getAuth,  onAuthStateChanged,  signOut} from "https://www.gstatic.com/firebasejs/10.12.5/firebase-auth.js";
-    import {  getFirestore,  doc,  getDoc,  setDoc} from "https://www.gstatic.com/firebasejs/10.12.5/firebase-firestore.js";
+    import { getAuth, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.12.5/firebase-auth.js";
+    import { getFirestore, doc, getDoc, setDoc } from "https://www.gstatic.com/firebasejs/10.12.5/firebase-firestore.js";
 
     const firebaseConfig = {  
         apiKey: "AIzaSyBzyszqkVPOn_Zbs0eacE1KQccYsTxul1E",  
@@ -722,39 +612,47 @@
         }
     }
 
-    /* ================= SIDEBAR SCRIPTS ================= */
-    const menu = document.getElementById("menu");
+    /* ================= MODAL & WINDOW EVENT LISTENERS ================= */
     const overlay = document.getElementById("overlay");
     const modalContainer = document.getElementById("cardModalContainer");
     
-    document.getElementById("menuBtn").onclick = () => { menu.classList.add("open"); overlay.classList.add("show"); };
-    document.getElementById("closeMenu").onclick = closeMenu;
-    overlay.onclick = () => { closeMenu(); closeCardModal(); };
+    overlay.onclick = () => { closeCardModal(); };
     document.getElementById("closeCardBtn").onclick = closeCardModal;
-    
-    function closeMenu() {
-        menu.classList.remove("open");
+
+    function closeCardModal() {
+        modalContainer.classList.remove("show");
         overlay.classList.remove("show");
+        selectedBlook = null;
     }
 
-    /* BACKGROUND GENERATOR */
-    const bg = document.querySelector(".background");
-    for(let i=0; i<45; i++) {
-        const s = document.createElement("div");
-        s.className = "square";
-        s.style.left = Math.random() * 100 + "%";
-        s.style.width = s.style.height = (Math.random() * 25 + 10) + "px";
-        s.style.opacity = Math.random() * 0.5 + 0.2;
-        s.style.animationDuration = (Math.random() * 10 + 6) + "s";
-        bg.appendChild(s);
+    /* FLOATING BACKGROUND SQUARES GENERATOR */
+    function createSquares() {
+        const bg = document.querySelector(".background");
+        if (!bg) return;
+        bg.innerHTML = "";
+        
+        for (let i = 0; i < 60; i++) { 
+            const s = document.createElement("div"); 
+            s.className = "square"; 
+            s.style.left = Math.random() * 100 + "%"; 
+            
+            const size = Math.random() * 25 + 10; 
+            s.style.width = size + "px"; 
+            s.style.height = size + "px"; 
+            
+            s.style.top = (Math.random() * -100) - 50 + "px";
+            s.style.animationDelay = (Math.random() * 10) + "s";
+            
+            s.style.opacity = Math.random() * 0.6 + 0.25; 
+            s.style.animationDuration = (Math.random() * 10 + 6) + "s"; 
+            bg.appendChild(s);
+        }
     }
+    window.addEventListener("DOMContentLoaded", createSquares);
 
     const FALLBACK_IMAGE = "https://i.postimg.cc/9fZwBPpg/Placeholder.png";
 
-    /* ========================================================================
-       GLOBAL IMAGE CONSTANTS & PACKS DATA STRUCTURE
-       ========================================================================
-    */
+    /* CONFIGS AND REPLICAS DATA STRUCTURES */
     const CONFIG = {
         pizzaBlook: "https://i.postimg.cc/YSnT0Zmh/Pizza.webp",
         fallbackPlaceholder: "https://i.postimg.cc/p9VdWF3K/Placeholder.png"
@@ -787,8 +685,6 @@
     };
 
     const rarityValues = { "Uncommon": 5, "Rare": 20, "Epic": 75 };
-
-    /* RUNTIME ENGINE INVENTORY DATA SOURCE */
     let inventoryData = [];
 
     function buildRuntimeInventory() {
@@ -798,7 +694,6 @@
         Object.keys(packs).forEach(key => {
             const currentPack = packs[key];
             currentPack.blooks.forEach(blook => {
-                // Count occurrences inside the array saved system
                 const collectionArray = Array.from(ownedBlocks);
                 const countOwned = collectionArray.filter(name => name === blook.name).length;
 
@@ -817,7 +712,7 @@
         processFilters();
     }
 
-    /* INTERACTIVE FILTER AND SEARCH PROCESSING PIPELINE */
+    /* FILTERS PIPELINE BUILDER */
     function processFilters() {
         const scrollBox = document.getElementById("inventoryScrollContainer");
         scrollBox.innerHTML = "";
@@ -900,7 +795,6 @@
         });
     }
 
-    /* VIEW CARD MODAL CONTROLLERS */
     function openCardModal(blookItem) {
         selectedBlook = blookItem;
         
@@ -920,22 +814,13 @@
         modalContainer.classList.add("show");
     }
 
-    function closeCardModal() {
-        modalContainer.classList.remove("show");
-        if(!menu.classList.contains("open")) {
-            overlay.classList.remove("show");
-        }
-        selectedBlook = null;
-    }
-
-    /* QUANTITY ACCOUNT TRANSACTION PIEPLINES (UPDATED FOR ARRAY-SET REPLICAS) */
+    /* TRANSACTION WORKFLOW ENGINE HANDLERS */
     document.getElementById("sellSingleBtn").onclick = async () => {
         if (!selectedBlook || selectedBlook.qty <= 0) return;
         
         const value = rarityValues[selectedBlook.rarity] || 5;
         coins += value;
         
-        // Remove one matching instance from array tracking profile
         const collectionArray = Array.from(ownedBlocks);
         const targetIndex = collectionArray.indexOf(selectedBlook.name);
         if (targetIndex > -1) {
@@ -963,7 +848,6 @@
         
         coins += value;
         
-        // Keep only one occurrence of the item in the array tracking profile
         const collectionArray = Array.from(ownedBlocks).filter(name => name !== selectedBlook.name);
         collectionArray.push(selectedBlook.name);
         ownedBlocks = new Set(collectionArray);
@@ -976,7 +860,6 @@
         buildRuntimeInventory();
     };
 
-    // Listeners for UI interaction updates
     document.getElementById("blookSearchInput").oninput = processFilters;
     document.getElementById("categoryFilterDropdown").onchange = processFilters;
 
