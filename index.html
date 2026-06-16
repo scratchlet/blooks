@@ -555,7 +555,8 @@
 
     /* ================= GAME STATES ================= */
     let coins = 0;
-    let ownedBlocks = new Set(); 
+    // Changed from Set() to Array() to naturally allow duplicate strings/blooks
+    let ownedBlocks = []; 
     let currentUser = null;
     let selectedBlook = null;
 
@@ -586,10 +587,11 @@
             if (userSnapshot.exists()) {            
                 const data = userSnapshot.data();            
                 coins = data.coins !== undefined ? data.coins : 2500;            
-                ownedBlocks = new Set(data.ownedBlocks || []);        
+                ownedBlocks = Array.isArray(data.ownedBlocks) ? data.ownedBlocks : [];        
             } else {            
+                // Force reset to 0 blooks and default starting coins for a new account
                 coins = 2500;            
-                ownedBlocks = new Set();            
+                ownedBlocks = [];            
                 await saveUserData();        
             }        
             document.getElementById("coinCount").innerText = coins;
@@ -605,7 +607,7 @@
             const userDocRef = doc(db, "users", currentUser.uid);        
             await setDoc(userDocRef, {            
                 coins: coins,            
-                ownedBlocks: Array.from(ownedBlocks)        
+                ownedBlocks: ownedBlocks // Directly saves the string array with duplicates intact
             }, { merge: true });    
         } catch (error) {        
             console.error("Error saving backup cloud sync profile:", error);    
@@ -694,8 +696,8 @@
         Object.keys(packs).forEach(key => {
             const currentPack = packs[key];
             currentPack.blooks.forEach(blook => {
-                const collectionArray = Array.from(ownedBlocks);
-                const countOwned = collectionArray.filter(name => name === blook.name).length;
+                // Directly filters matching text blocks out of our persistent array state tracker
+                const countOwned = ownedBlocks.filter(name => name === blook.name).length;
 
                 inventoryData.push({
                     id: runtimeId++,
@@ -821,12 +823,11 @@
         const value = rarityValues[selectedBlook.rarity] || 5;
         coins += value;
         
-        const collectionArray = Array.from(ownedBlocks);
-        const targetIndex = collectionArray.indexOf(selectedBlook.name);
+        // Remove only exactly ONE instance of this blook's name from the array layout
+        const targetIndex = ownedBlocks.indexOf(selectedBlook.name);
         if (targetIndex > -1) {
-            collectionArray.splice(targetIndex, 1);
+            ownedBlocks.splice(targetIndex, 1);
         }
-        ownedBlocks = new Set(collectionArray);
         
         document.getElementById("coinCount").textContent = coins;
         await saveUserData();
@@ -848,9 +849,9 @@
         
         coins += value;
         
-        const collectionArray = Array.from(ownedBlocks).filter(name => name !== selectedBlook.name);
-        collectionArray.push(selectedBlook.name);
-        ownedBlocks = new Set(collectionArray);
+        // Wipe all copies of this blook completely out, then append exactly 1 back
+        ownedBlocks = ownedBlocks.filter(name => name !== selectedBlook.name);
+        ownedBlocks.push(selectedBlook.name);
         
         document.getElementById("coinCount").textContent = coins;
         await saveUserData();
