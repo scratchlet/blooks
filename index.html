@@ -526,15 +526,14 @@
                     <div class="card-pill" id="modalRarity">Rarity</div>
                     <div class="card-pill" id="modalChance">0%</div>
                     <div class="card-pill" id="modalOwned">Owned: 0</div>
+                    <div class="card-pill" id="modalValuePill" style="background-color: #8f3200; color: #fff4d6;">🪙 <span id="sellValue">0</span></div>
                 </div>
             </div>
             <div class="card-actions">
                 <div id="verificationWrapper" style="display: none; width: 100%;">
                     <input type="text" class="blook-verify-input" id="blookVerifyInput" placeholder='Type name to confirm'>
                 </div>
-                <button class="action-btn btn-sell" id="sellSingleBtn">
-                    <span id="sellBtnLabel">Sell</span> (🪙 <span id="sellValue">0</span>)
-                </button>
+                <button class="action-btn btn-sell" id="sellSingleBtn">Sell</button>
                 <button class="action-btn btn-sell-dupes" id="sellDupesBtn">Sell Duplicates</button>
             </div>
         </div>
@@ -676,7 +675,6 @@
     const verifyInput = document.getElementById("blookVerifyInput");
     const verifyWrapper = document.getElementById("verificationWrapper");
     const sellSingleBtn = document.getElementById("sellSingleBtn");
-    const sellBtnLabel = document.getElementById("sellBtnLabel");
     const sellValue = document.getElementById("sellValue");
     
     modalContainer.onclick = (e) => {
@@ -891,7 +889,8 @@
         
         const price = rarityValues[blookItem.rarity] || 5;
         sellValue.textContent = price;
-        sellBtnLabel.textContent = "Sell";
+        
+        sellSingleBtn.innerText = "Sell";
         sellSingleBtn.disabled = false;
 
         const sellDupesBtn = document.getElementById("sellDupesBtn");
@@ -927,8 +926,7 @@
                 verifyWrapper.style.display = "block";
                 verifyInput.value = "";
                 verifyInput.placeholder = `Type "${selectedBlook.name}" to sell last one`;
-                sellBtnLabel.textContent = "Confirm Sell Last Blook";
-                sellValue.textContent = "";
+                sellSingleBtn.innerText = "Confirm Sell Last Blook";
                 sellSingleBtn.disabled = true;
                 return;
             } else {
