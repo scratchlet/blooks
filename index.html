@@ -370,7 +370,7 @@
         .blook-qty-badge .material-icons { font-size: 1rem; }
         .no-results-text { text-align: center; font-size: 1.2rem; color: rgba(255,255,255,0.6); padding-top: 40px; }
         
-        /* VIEW MODAL CARD SYSTEM - LARGER HORIZONTAL RECTANGLE */
+        /* VIEW MODAL CARD SYSTEM - HORIZONTAL RECTANGLE LAYOUT */
         .modal-container {
             position: fixed;
             inset: 0;
@@ -436,7 +436,7 @@
             flex-shrink: 0;
         }
 
-        .card-right-col { flex: 1 1 auto; display: flex; flex-direction: column; text-align: left; height: 100%; justify-content: cubic-bezier; }
+        .card-right-col { flex: 1 1 auto; display: flex; flex-direction: column; text-align: left; height: 100%; }
         .card-name { font-family: "Titan One", cursive; font-size: 1.8rem; margin-bottom: 8px; line-height: 1.2; }
         .card-meta-row { display: flex; justify-content: flex-start; flex-wrap: wrap; gap: 8px; margin-bottom: 12px; }
         .card-pill { padding: 4px 12px; border-radius: 20px; font-size: 0.85rem; font-weight: 800; background: rgba(0,0,0,0.15); }
@@ -466,7 +466,7 @@
             cursor: not-allowed;
         }
 
-        /* MATCHING INPUT UI FOR VERIFICATION SAFEGUARD */
+        /* SAFEGUARD TEXT CONFIRMATION FIELD */
         .blook-verify-input {
             width: 100%;
             padding: 10px;
@@ -674,6 +674,12 @@
     const verifyWrapper = document.getElementById("verificationWrapper");
     const sellSingleBtn = document.getElementById("sellSingleBtn");
     
+    // FIX: Catch clicks landing directly on the modal container outer alignment bounds
+    modalContainer.onclick = (e) => {
+        if (e.target === modalContainer) {
+            closeCardModal();
+        }
+    };
     overlay.onclick = () => { closeCardModal(); };
     document.getElementById("closeCardBtn").onclick = closeCardModal;
 
@@ -870,7 +876,7 @@
     function openCardModal(blookItem) {
         selectedBlook = blookItem;
         verifyInput.value = ""; 
-        verifyWrapper.style.display = "none"; // Always hidden upon initial modal open
+        verifyWrapper.style.display = "none"; 
         
         document.getElementById("modalName").textContent = blookItem.name;
         document.getElementById("modalRarity").textContent = blookItem.rarity;
@@ -885,7 +891,6 @@
         sellSingleBtn.innerText = `Sell (🪙 ${price})`;
         sellSingleBtn.disabled = false;
 
-        // DUPLICATES ACTION: Render transparent instead of completely changing display rule values
         const sellDupesBtn = document.getElementById("sellDupesBtn");
         if (blookItem.qty > 1) {
             sellDupesBtn.classList.remove("is-transparent");
@@ -899,7 +904,7 @@
         modalContainer.classList.add("show");
     }
 
-    /* REALTIME MATCH VERIFICATION CHECK ENGINE EVENT HANDLER */
+    /* SAFEGUARD REALTIME TEXT MATCH VALIDATION SYSTEM */
     verifyInput.addEventListener("input", (e) => {
         if (!selectedBlook) return;
         if (e.target.value === selectedBlook.name) {
@@ -913,10 +918,9 @@
     sellSingleBtn.onclick = async () => {
         if (!selectedBlook || selectedBlook.qty <= 0) return;
         
-        // SAFEGUARD WORKFLOW: Only require and present the input verification if they have exactly 1 copy
+        // Confirmation appears ONLY if you possess exactly 1 copy
         if (selectedBlook.qty === 1) {
             if (verifyWrapper.style.display === "none" || !verifyWrapper.style.display) {
-                // First click detected while owning 1 copy: show input confirmation and freeze button
                 verifyWrapper.style.display = "block";
                 verifyInput.value = "";
                 verifyInput.placeholder = `Type "${selectedBlook.name}" to sell last one`;
@@ -924,7 +928,6 @@
                 sellSingleBtn.disabled = true;
                 return;
             } else {
-                // Secondary final click: ensure the input perfectly matches before performing deletion transaction
                 if (verifyInput.value !== selectedBlook.name) return;
             }
         }
