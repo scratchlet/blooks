@@ -370,7 +370,7 @@
         .blook-qty-badge .material-icons { font-size: 1rem; }
         .no-results-text { text-align: center; font-size: 1.2rem; color: rgba(255,255,255,0.6); padding-top: 40px; }
         
-        /* VIEW MODAL CARD SYSTEM */
+        /* VIEW MODAL CARD SYSTEM - UPDATED TO A LARGER VERTICAL RECTANGLE */
         .modal-container {
             position: fixed;
             inset: 0;
@@ -390,17 +390,17 @@
             background: #ff8c1a;
             border: 4px solid white;
             border-radius: 24px;
-            width: 520px;
+            width: 360px;
+            height: 560px;
             max-width: 100%;
-            padding: 30px 25px 25px 25px;
+            padding: 25px;
             box-shadow: 0 20px 40px rgba(0,0,0,0.4);
             position: relative;
             transform: scale(0.8);
             transition: transform 0.2s ease;
             display: flex;
-            flex-direction: row;
+            flex-direction: column;
             align-items: center;
-            gap: 25px;
         }
         
         .modal-container.show .blook-view-card { transform: scale(1); }
@@ -422,15 +422,48 @@
             z-index: 5;
         }
         
-        .card-left-col { flex: 0 0 auto; display: flex; align-items: center; justify-content: center; }
-        .card-graphic-frame { width: 140px; height: 140px; background: rgba(255,255,255,0.15); border-radius: 20px; display: flex; align-items: center; justify-content: center; }
+        /* UPPER HALF - BLOOK GRAPHIC */
+        .card-left-col { 
+            flex: 0 0 auto; 
+            display: flex; 
+            align-items: center; 
+            justify-content: center; 
+            margin-top: 10px;
+        }
+        .card-graphic-frame { 
+            width: 150px; 
+            height: 150px; 
+            background: rgba(255,255,255,0.15); 
+            border-radius: 20px; 
+            display: flex; 
+            align-items: center; 
+            justify-content: center; 
+        }
         .card-graphic { width: 75%; height: 75%; object-fit: contain; }
         
-        .card-right-col { flex: 1 1 auto; display: flex; flex-direction: column; text-align: left; }
-        .card-name { font-family: "Titan One", cursive; font-size: 1.8rem; margin-bottom: 8px; line-height: 1.2; }
-        .card-meta-row { display: flex; justify-content: flex-start; flex-wrap: wrap; gap: 8px; margin-bottom: 18px; }
+        /* SHARP SEPARATION LINE BETWEEN BLOOK AND CONTENT */
+        .blook-divider {
+            width: 100%;
+            height: 3px;
+            background-color: rgba(255, 255, 255, 0.4);
+            margin: 20px 0 15px 0;
+            border-radius: 2px;
+            flex-shrink: 0;
+        }
+
+        /* LOWER HALF - DETAILS & CONTROLS */
+        .card-right-col { 
+            flex: 1 1 auto; 
+            display: flex; 
+            flex-direction: column; 
+            text-align: center; 
+            width: 100%;
+            justify-content: space-between;
+        }
+        .card-name { font-family: "Titan One", cursive; font-size: 1.8rem; margin-bottom: 6px; line-height: 1.2; }
+        .card-meta-row { display: flex; justify-content: center; flex-wrap: wrap; gap: 6px; margin-bottom: 15px; }
         .card-pill { padding: 4px 12px; border-radius: 20px; font-size: 0.85rem; font-weight: 800; background: rgba(0,0,0,0.15); }
-        .card-actions { display: flex; flex-direction: column; gap: 10px; }
+        .card-actions { display: flex; flex-direction: column; gap: 10px; width: 100%; margin-top: auto; }
         
         .action-btn {
             width: 100%;
@@ -445,14 +478,47 @@
             transition: transform 0.1s, box-shadow 0.1s;
         }
         
-        .action-btn:active { transform: translateY(3px); box-shadow: 0 2px 0 rgba(0,0,0,0.2); }
+        .action-btn:active:not(:disabled) { transform: translateY(3px); box-shadow: 0 2px 0 rgba(0,0,0,0.2); }
         .btn-sell { background: white; color: #d62424; }
-        .btn-sell-dupes { background: #ffb633; color: white; border: 2px solid rgba(255,255,255,0.4); }
+        
+        /* TRANSPARENT SELL DUPLICATES SYSTEM STYLE */
+        .btn-sell-dupes { background: #ffb633; color: white; border: 2px solid rgba(255,255,255,0.4); transition: opacity 0.2s ease; }
+        .btn-sell-dupes.is-transparent {
+            opacity: 0.35;
+            pointer-events: none; /* Block click handlers when transparent */
+            cursor: not-allowed;
+        }
+
+        /* SAFEGUARD INPUT STYLING */
+        .blook-verify-input {
+            width: 100%;
+            padding: 11px;
+            border: 2px solid rgba(255, 255, 255, 0.4);
+            border-radius: 14px;
+            font-size: 0.95rem;
+            text-align: center;
+            background: rgba(0, 0, 0, 0.15);
+            color: white;
+            font-weight: 700;
+            outline: none;
+            margin-bottom: 2px;
+            transition: border-color 0.2s;
+        }
+        .blook-verify-input::placeholder {
+            color: rgba(255, 255, 255, 0.6);
+        }
+        .blook-verify-input:focus {
+            border-color: white;
+        }
+        .action-btn:disabled {
+            background: #e0e0e0;
+            color: #9e9e9e;
+            box-shadow: 0 5px 0 #b5b5b5;
+            cursor: not-allowed;
+        }
 
         @media (max-width: 480px) {
-            .blook-view-card { flex-direction: column; text-align: center; padding-top: 40px; }
-            .card-right-col { text-align: center; width: 100%; }
-            .card-meta-row { justify-content: center; }
+            .blook-view-card { height: auto; min-height: 540px; }
         }
     </style>
 </head>
@@ -469,14 +535,23 @@
                 <img src="https://scratchlet.github.io/blooks/" alt="" class="card-graphic" id="modalGraphic">
             </div>
         </div>
+        
+        <div class="blook-divider"></div>
+        
         <div class="card-right-col">
-            <div class="card-name" id="modalName">Blook Name</div>
-            <div class="card-meta-row">
-                <div class="card-pill" id="modalRarity">Rarity</div>
-                <div class="card-pill" id="modalChance">0%</div>
-                <div class="card-pill" id="modalOwned">Owned: 0</div>
+            <div>
+                <div class="card-name" id="modalName">Blook Name</div>
+                <div class="card-meta-row">
+                    <div class="card-pill" id="modalRarity">Rarity</div>
+                    <div class="card-pill" id="modalChance">0%</div>
+                    <div class="card-pill" id="modalOwned">Owned: 0</div>
+                </div>
             </div>
+            
             <div class="card-actions">
+                <div id="verificationWrapper" style="display: none; width: 100%;">
+                    <input type="text" class="blook-verify-input" id="blookVerifyInput" placeholder='Type name to sell last one'>
+                </div>
                 <button class="action-btn btn-sell" id="sellSingleBtn">Sell (🪙 <span id="sellValue">0</span>)</button>
                 <button class="action-btn btn-sell-dupes" id="sellDupesBtn">Sell Duplicates</button>
             </div>
@@ -556,7 +631,6 @@
 
     /* ================= GAME STATES ================= */
     let coins = 0;
-    // Changed from Set() to Array() to naturally allow duplicate strings/blooks
     let ownedBlocks = []; 
     let currentUser = null;
     let selectedBlook = null;
@@ -590,7 +664,6 @@
                 coins = data.coins !== undefined ? data.coins : 0;            
                 ownedBlocks = Array.isArray(data.ownedBlocks) ? data.ownedBlocks : [];        
             } else {            
-                // Force reset to 0 blooks and default starting coins for a new account
                 coins = 0;            
                 ownedBlocks = [];            
                 await saveUserData();        
@@ -608,7 +681,7 @@
             const userDocRef = doc(db, "users", currentUser.uid);        
             await setDoc(userDocRef, {            
                 coins: coins,            
-                ownedBlocks: ownedBlocks // Directly saves the string array with duplicates intact
+                ownedBlocks: ownedBlocks 
             }, { merge: true });    
         } catch (error) {        
             console.error("Error saving backup cloud sync profile:", error);    
@@ -618,6 +691,9 @@
     /* ================= MODAL & WINDOW EVENT LISTENERS ================= */
     const overlay = document.getElementById("overlay");
     const modalContainer = document.getElementById("cardModalContainer");
+    const verifyInput = document.getElementById("blookVerifyInput");
+    const verifyWrapper = document.getElementById("verificationWrapper");
+    const sellSingleBtn = document.getElementById("sellSingleBtn");
     
     overlay.onclick = () => { closeCardModal(); };
     document.getElementById("closeCardBtn").onclick = closeCardModal;
@@ -626,6 +702,7 @@
         modalContainer.classList.remove("show");
         overlay.classList.remove("show");
         selectedBlook = null;
+        verifyInput.value = ""; // Clean value clear
     }
 
     /* FLOATING BACKGROUND SQUARES GENERATOR */
@@ -698,13 +775,11 @@
             {name:"Agent Owl",rarity:"Chroma",rarityColor:"cyan",chance:0.05,image:"https://i.postimg.cc/yNb2C4rz/Agent-Owl.webp"},
             {name:"Wise Owl",rarity:"Celestial",rarityColor:"teal",chance:0.025,image:"https://i.postimg.cc/g2nJcbHc/Wise-Owl.webp"},
             {name:"Phantom King",rarity:"Mystical",rarityColor:"purple",chance:0.005,image:""},
-
         ]
     },
-
     };
 
-    const rarityValues = { "Uncommon": 5, "Rare": 20, "Epic": 75, "Legendary": 250, "Chroma": 300 };
+    const rarityValues = { "Uncommon": 5, "Rare": 20, "Epic": 75, "Legendary": 250, "Chroma": 300, "Celestial": 500, "Mystical": 1000 };
     let inventoryData = [];
 
     function buildRuntimeInventory() {
@@ -714,7 +789,6 @@
         Object.keys(packs).forEach(key => {
             const currentPack = packs[key];
             currentPack.blooks.forEach(blook => {
-                // Directly filters matching text blocks out of our persistent array state tracker
                 const countOwned = ownedBlocks.filter(name => name === blook.name).length;
 
                 inventoryData.push({
@@ -817,6 +891,7 @@
 
     function openCardModal(blookItem) {
         selectedBlook = blookItem;
+        verifyInput.value = ""; // Clear verify input clean on open
         
         document.getElementById("modalName").textContent = blookItem.name;
         document.getElementById("modalRarity").textContent = blookItem.rarity;
@@ -828,20 +903,54 @@
         const price = rarityValues[blookItem.rarity] || 5;
         document.getElementById("sellValue").textContent = price;
         
-        document.getElementById("sellDupesBtn").style.display = blookItem.qty > 1 ? "block" : "none";
+        // SAFEGUARD CONTROL: If it is the last item owned, show verification input and disable button
+        if (blookItem.qty === 1) {
+            verifyWrapper.style.display = "block";
+            verifyInput.placeholder = `Type "${blookItem.name}" to sell`;
+            sellSingleBtn.innerText = "Sell Last Blook";
+            sellSingleBtn.disabled = true;
+        } else {
+            verifyWrapper.style.display = "none";
+            sellSingleBtn.innerText = `Sell (🪙 ${price})`;
+            sellSingleBtn.disabled = false;
+        }
+
+        // DUPLICATES ACTION: Transparent instead of display: none
+        const sellDupesBtn = document.getElementById("sellDupesBtn");
+        if (blookItem.qty > 1) {
+            sellDupesBtn.classList.remove("is-transparent");
+            sellDupesBtn.innerText = `Sell Duplicates (+🪙 ${(blookItem.qty - 1) * price})`;
+        } else {
+            sellDupesBtn.classList.add("is-transparent");
+            sellDupesBtn.innerText = "Sell Duplicates";
+        }
 
         overlay.classList.add("show");
         modalContainer.classList.add("show");
     }
 
+    /* REALTIME VERIFICATION EVENT HANDLER */
+    verifyInput.addEventListener("input", (e) => {
+        if (!selectedBlook) return;
+        if (e.target.value === selectedBlook.name) {
+            sellSingleBtn.disabled = false;
+        } else {
+            sellSingleBtn.disabled = true;
+        }
+    });
+
     /* TRANSACTION WORKFLOW ENGINE HANDLERS */
-    document.getElementById("sellSingleBtn").onclick = async () => {
+    sellSingleBtn.onclick = async () => {
         if (!selectedBlook || selectedBlook.qty <= 0) return;
         
+        // Double check safeguard input value match if selling the last one
+        if (selectedBlook.qty === 1 && verifyInput.value !== selectedBlook.name) {
+            return;
+        }
+
         const value = rarityValues[selectedBlook.rarity] || 5;
         coins += value;
         
-        // Remove only exactly ONE instance of this blook's name from the array layout
         const targetIndex = ownedBlocks.indexOf(selectedBlook.name);
         if (targetIndex > -1) {
             ownedBlocks.splice(targetIndex, 1);
@@ -867,7 +976,6 @@
         
         coins += value;
         
-        // Wipe all copies of this blook completely out, then append exactly 1 back
         ownedBlocks = ownedBlocks.filter(name => name !== selectedBlook.name);
         ownedBlocks.push(selectedBlook.name);
         
