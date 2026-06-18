@@ -370,7 +370,7 @@
         .blook-qty-badge .material-icons { font-size: 1rem; }
         .no-results-text { text-align: center; font-size: 1.2rem; color: rgba(255,255,255,0.6); padding-top: 40px; }
         
-        /* VIEW MODAL CARD SYSTEM - UPDATED TO A LARGER VERTICAL RECTANGLE */
+        /* VIEW MODAL CARD SYSTEM - LARGER HORIZONTAL RECTANGLE */
         .modal-container {
             position: fixed;
             inset: 0;
@@ -390,17 +390,18 @@
             background: #ff8c1a;
             border: 4px solid white;
             border-radius: 24px;
-            width: 360px;
-            height: 560px;
+            width: 620px;
+            height: 340px;
             max-width: 100%;
-            padding: 25px;
+            padding: 30px 25px;
             box-shadow: 0 20px 40px rgba(0,0,0,0.4);
             position: relative;
             transform: scale(0.8);
             transition: transform 0.2s ease;
             display: flex;
-            flex-direction: column;
+            flex-direction: row;
             align-items: center;
+            gap: 25px;
         }
         
         .modal-container.show .blook-view-card { transform: scale(1); }
@@ -422,48 +423,24 @@
             z-index: 5;
         }
         
-        /* UPPER HALF - BLOOK GRAPHIC */
-        .card-left-col { 
-            flex: 0 0 auto; 
-            display: flex; 
-            align-items: center; 
-            justify-content: center; 
-            margin-top: 10px;
-        }
-        .card-graphic-frame { 
-            width: 150px; 
-            height: 150px; 
-            background: rgba(255,255,255,0.15); 
-            border-radius: 20px; 
-            display: flex; 
-            align-items: center; 
-            justify-content: center; 
-        }
+        .card-left-col { flex: 0 0 auto; display: flex; align-items: center; justify-content: center; }
+        .card-graphic-frame { width: 160px; height: 160px; background: rgba(255,255,255,0.15); border-radius: 20px; display: flex; align-items: center; justify-content: center; }
         .card-graphic { width: 75%; height: 75%; object-fit: contain; }
         
-        /* SHARP SEPARATION LINE BETWEEN BLOOK AND CONTENT */
+        /* VERTICAL DIVIDER LINE */
         .blook-divider {
-            width: 100%;
-            height: 3px;
-            background-color: rgba(255, 255, 255, 0.4);
-            margin: 20px 0 15px 0;
+            width: 3px;
+            height: 100%;
+            background-color: rgba(255, 255, 255, 0.3);
             border-radius: 2px;
             flex-shrink: 0;
         }
 
-        /* LOWER HALF - DETAILS & CONTROLS */
-        .card-right-col { 
-            flex: 1 1 auto; 
-            display: flex; 
-            flex-direction: column; 
-            text-align: center; 
-            width: 100%;
-            justify-content: space-between;
-        }
-        .card-name { font-family: "Titan One", cursive; font-size: 1.8rem; margin-bottom: 6px; line-height: 1.2; }
-        .card-meta-row { display: flex; justify-content: center; flex-wrap: wrap; gap: 6px; margin-bottom: 15px; }
+        .card-right-col { flex: 1 1 auto; display: flex; flex-direction: column; text-align: left; height: 100%; justify-content: cubic-bezier; }
+        .card-name { font-family: "Titan One", cursive; font-size: 1.8rem; margin-bottom: 8px; line-height: 1.2; }
+        .card-meta-row { display: flex; justify-content: flex-start; flex-wrap: wrap; gap: 8px; margin-bottom: 12px; }
         .card-pill { padding: 4px 12px; border-radius: 20px; font-size: 0.85rem; font-weight: 800; background: rgba(0,0,0,0.15); }
-        .card-actions { display: flex; flex-direction: column; gap: 10px; width: 100%; margin-top: auto; }
+        .card-actions { display: flex; flex-direction: column; gap: 10px; margin-top: auto; width: 100%; }
         
         .action-btn {
             width: 100%;
@@ -481,27 +458,27 @@
         .action-btn:active:not(:disabled) { transform: translateY(3px); box-shadow: 0 2px 0 rgba(0,0,0,0.2); }
         .btn-sell { background: white; color: #d62424; }
         
-        /* TRANSPARENT SELL DUPLICATES SYSTEM STYLE */
+        /* SEMI-TRANSPARENT SYSTEM STYLE FOR DUPLICATES */
         .btn-sell-dupes { background: #ffb633; color: white; border: 2px solid rgba(255,255,255,0.4); transition: opacity 0.2s ease; }
         .btn-sell-dupes.is-transparent {
             opacity: 0.35;
-            pointer-events: none; /* Block click handlers when transparent */
+            pointer-events: none;
             cursor: not-allowed;
         }
 
-        /* SAFEGUARD INPUT STYLING */
+        /* MATCHING INPUT UI FOR VERIFICATION SAFEGUARD */
         .blook-verify-input {
             width: 100%;
-            padding: 11px;
+            padding: 10px;
             border: 2px solid rgba(255, 255, 255, 0.4);
-            border-radius: 14px;
-            font-size: 0.95rem;
+            border-radius: 12px;
+            font-size: 0.9rem;
             text-align: center;
             background: rgba(0, 0, 0, 0.15);
             color: white;
             font-weight: 700;
             outline: none;
-            margin-bottom: 2px;
+            margin-bottom: 4px;
             transition: border-color 0.2s;
         }
         .blook-verify-input::placeholder {
@@ -518,7 +495,10 @@
         }
 
         @media (max-width: 480px) {
-            .blook-view-card { height: auto; min-height: 540px; }
+            .blook-view-card { flex-direction: column; text-align: center; padding-top: 40px; height: auto; }
+            .blook-divider { width: 100%; height: 3px; margin: 10px 0; }
+            .card-right-col { text-align: center; width: 100%; }
+            .card-meta-row { justify-content: center; }
         }
     </style>
 </head>
@@ -547,10 +527,9 @@
                     <div class="card-pill" id="modalOwned">Owned: 0</div>
                 </div>
             </div>
-            
             <div class="card-actions">
                 <div id="verificationWrapper" style="display: none; width: 100%;">
-                    <input type="text" class="blook-verify-input" id="blookVerifyInput" placeholder='Type name to sell last one'>
+                    <input type="text" class="blook-verify-input" id="blookVerifyInput" placeholder='Type name to confirm'>
                 </div>
                 <button class="action-btn btn-sell" id="sellSingleBtn">Sell (🪙 <span id="sellValue">0</span>)</button>
                 <button class="action-btn btn-sell-dupes" id="sellDupesBtn">Sell Duplicates</button>
@@ -702,7 +681,6 @@
         modalContainer.classList.remove("show");
         overlay.classList.remove("show");
         selectedBlook = null;
-        verifyInput.value = ""; // Clean value clear
     }
 
     /* FLOATING BACKGROUND SQUARES GENERATOR */
@@ -891,7 +869,8 @@
 
     function openCardModal(blookItem) {
         selectedBlook = blookItem;
-        verifyInput.value = ""; // Clear verify input clean on open
+        verifyInput.value = ""; 
+        verifyWrapper.style.display = "none"; // Always hidden upon initial modal open
         
         document.getElementById("modalName").textContent = blookItem.name;
         document.getElementById("modalRarity").textContent = blookItem.rarity;
@@ -903,19 +882,10 @@
         const price = rarityValues[blookItem.rarity] || 5;
         document.getElementById("sellValue").textContent = price;
         
-        // SAFEGUARD CONTROL: If it is the last item owned, show verification input and disable button
-        if (blookItem.qty === 1) {
-            verifyWrapper.style.display = "block";
-            verifyInput.placeholder = `Type "${blookItem.name}" to sell`;
-            sellSingleBtn.innerText = "Sell Last Blook";
-            sellSingleBtn.disabled = true;
-        } else {
-            verifyWrapper.style.display = "none";
-            sellSingleBtn.innerText = `Sell (🪙 ${price})`;
-            sellSingleBtn.disabled = false;
-        }
+        sellSingleBtn.innerText = `Sell (🪙 ${price})`;
+        sellSingleBtn.disabled = false;
 
-        // DUPLICATES ACTION: Transparent instead of display: none
+        // DUPLICATES ACTION: Render transparent instead of completely changing display rule values
         const sellDupesBtn = document.getElementById("sellDupesBtn");
         if (blookItem.qty > 1) {
             sellDupesBtn.classList.remove("is-transparent");
@@ -929,7 +899,7 @@
         modalContainer.classList.add("show");
     }
 
-    /* REALTIME VERIFICATION EVENT HANDLER */
+    /* REALTIME MATCH VERIFICATION CHECK ENGINE EVENT HANDLER */
     verifyInput.addEventListener("input", (e) => {
         if (!selectedBlook) return;
         if (e.target.value === selectedBlook.name) {
@@ -943,9 +913,20 @@
     sellSingleBtn.onclick = async () => {
         if (!selectedBlook || selectedBlook.qty <= 0) return;
         
-        // Double check safeguard input value match if selling the last one
-        if (selectedBlook.qty === 1 && verifyInput.value !== selectedBlook.name) {
-            return;
+        // SAFEGUARD WORKFLOW: Only require and present the input verification if they have exactly 1 copy
+        if (selectedBlook.qty === 1) {
+            if (verifyWrapper.style.display === "none" || !verifyWrapper.style.display) {
+                // First click detected while owning 1 copy: show input confirmation and freeze button
+                verifyWrapper.style.display = "block";
+                verifyInput.value = "";
+                verifyInput.placeholder = `Type "${selectedBlook.name}" to sell last one`;
+                sellSingleBtn.innerText = "Confirm Sell Last Blook";
+                sellSingleBtn.disabled = true;
+                return;
+            } else {
+                // Secondary final click: ensure the input perfectly matches before performing deletion transaction
+                if (verifyInput.value !== selectedBlook.name) return;
+            }
         }
 
         const value = rarityValues[selectedBlook.rarity] || 5;
